@@ -51,17 +51,21 @@ hexo.extend.generator.register('alist-movies', async function(locals) {
     const allMovies = await Promise.all(moviePromises);
     hexo.log.info(`Successfully processed ${allMovies.length} movies.`);
 
-    const templatePath = path.join(__dirname, 'templates', 'movies.ejs');
-    const renderedHtml = await ejs.renderFile(templatePath, { movies: allMovies });
-
     hexo.log.info('Alist Movie Generator: Generation complete. Returning routes...');
 
+    // 渲染电影模板内容
+    const templatePath = path.join(__dirname, 'templates', 'movies.ejs');
+    const movieContent = await ejs.renderFile(templatePath, { movies: allMovies });
+
     const movieRoutes = [
-      // 1. 电影列表页面
+      // 1. 电影列表页面 - 使用Hexo布局系统（通过 page 视图承载 content，从而由主题 layout 包裹并保留导航）
       {
         path: 'movies/index.html',
-        data: renderedHtml,
-        layout: false
+        data: {
+          title: '电影中心',
+          content: movieContent
+        },
+        layout: ['page', 'index']
       },
       // 2. 电影数据 API
       {
