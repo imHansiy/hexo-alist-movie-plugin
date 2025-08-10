@@ -1,0 +1,164 @@
+/* --- 全局和基础样式 --- */
+:root {
+   --primary-bg-color: #ffffff;
+   --secondary-bg-color: #f4f6f8;
+   --primary-text-color: #1a1a1a;
+   --secondary-text-color: #555;
+   --border-color: #e0e0e0;
+   --accent-color: #007bff;
+   --shadow-color: rgba(0, 0, 0, 0.08);
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--primary-bg-color);
+    color: var(--primary-text-color);
+}
+
+a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* --- 主容器布局 --- */
+.main-container {
+    display: flex;
+    flex-direction: row;
+    max-width: 1750px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.player-wrapper {
+    flex: 3; /* 占据更多空间 */
+    margin-right: 24px;
+}
+
+.recommendations {
+    flex: 1; /* 占据较少空间 */
+    min-width: 300px; /* 保证最小宽度 */
+}
+
+/* --- 播放器样式 --- */
+.player-container {
+    background-color: #000;
+    /* 使用现代 CSS 属性保持 16:9 的宽高比，比旧的 padding-top 技巧更清晰 */
+    aspect-ratio: 16 / 9;
+}
+
+#player {
+    width: 100%;
+    height: 100%;
+    display: block; /* 确保 video 元素是块级，避免底部出现小间隙 */
+}
+
+/* --- 电影信息 --- */
+.movie-info {
+    padding-top: 16px;
+}
+
+.movie-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+}
+
+.movie-details {
+    color: var(--secondary-text-color);
+    margin-bottom: 16px;
+}
+
+.movie-overview-box {
+    background-color: var(--secondary-bg-color);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.movie-overview-box h2 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+.movie-overview {
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+/* --- 推荐列表 --- */
+.recommendations h3 {
+    font-size: 20px;
+    margin: 0 0 16px 0;
+}
+
+.recommendation-item {
+    margin-bottom: 12px;
+}
+
+.recommendation-item a {
+    display: flex;
+    align-items: flex-start;
+    transition: background-color 0.2s ease;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.recommendation-item a:hover {
+    background-color: var(--secondary-bg-color);
+    text-decoration: none;
+}
+
+.recommendation-poster {
+    width: 120px;
+    height: auto;
+    border-radius: 6px;
+    margin-right: 12px;
+}
+
+.recommendation-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.recommendation-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--primary-text-color);
+    margin-bottom: 4px;
+}
+
+.recommendation-details {
+    font-size: 13px;
+    color: var(--secondary-text-color);
+}
+
+/* --- 响应式设计 --- */
+@media (max-width: 1024px) {
+    .main-container {
+        flex-direction: column;
+    }
+
+    .player-wrapper {
+        margin-right: 0;
+        margin-bottom: 24px;
+    }
+
+    .recommendations {
+        min-width: auto;
+    }
+}
