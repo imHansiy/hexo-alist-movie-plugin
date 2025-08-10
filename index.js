@@ -57,6 +57,10 @@ hexo.extend.generator.register('alist-movies', async function(locals) {
     const templatePath = path.join(__dirname, 'templates', 'movies.ejs');
     const movieContent = await ejs.renderFile(templatePath, { movies: allMovies });
 
+    // 渲染播放器模板内容
+    const playerTemplatePath = path.join(__dirname, 'templates', 'player.ejs');
+    const playerContent = await ejs.renderFile(playerTemplatePath, { movies: allMovies });
+
     const movieRoutes = [
       // 1. 电影列表页面 - 使用Hexo布局系统（通过 page 视图承载 content，从而由主题 layout 包裹并保留导航）
       {
@@ -67,7 +71,16 @@ hexo.extend.generator.register('alist-movies', async function(locals) {
         },
         layout: ['page', 'index']
       },
-      // 2. 电影数据 API
+      // 2. 播放器页面 - 使用Hexo布局系统保留导航栏
+      {
+        path: 'movies/player/index.html',
+        data: {
+          title: '电影播放器',
+          content: playerContent
+        },
+        layout: ['page', 'index']
+      },
+      // 3. 电影数据 API
       {
         path: 'data/movies.json',
         data: JSON.stringify(allMovies)
