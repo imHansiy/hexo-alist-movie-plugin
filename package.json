@@ -1,0 +1,22 @@
+{
+  "name": "hexo-alist-movie-plugin",
+  "version": "1.0.0",
+  "description": "A Hexo plugin to generate a movie page from Alist and TMDb.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "hexo",
+    "alist",
+    "movie",
+    "tmdb"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "ejs": "^3.1.6",
+    "fs-extra": "^10.0.0"
+  }
+}
