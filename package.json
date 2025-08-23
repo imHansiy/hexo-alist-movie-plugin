@@ -1,22 +1,42 @@
 {
   "name": "hexo-alist-movie-plugin",
   "version": "1.0.0",
-  "description": "A Hexo plugin to generate a movie page from Alist and TMDb.",
+  "description": "一个功能强大的 Hexo 插件，可从 Alist 获取影视资源，并结合 TMDb API 自动生成带元数据的精美展示页面。A powerful Hexo plugin that fetches movie and TV show resources from Alist and automatically generates beautiful display pages with metadata using TMDb API.",
   "main": "index.js",
   "scripts": {
+    "lint": "eslint .",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imHansiy/hexo-alist-movie-plugin.git"
   },
   "keywords": [
     "hexo",
+    "hexo-plugin",
     "alist",
     "movie",
-    "tmdb"
+    "tv",
+    "tmdb",
+    "generator",
+    "smart-detection"
   ],
-  "author": "",
+  "author": {
+    "name": "Hansiy",
+    "email": "hexo_alist_movie_plugin@hansiy.net",
+    "url": "https://hansiy.net"
+  },
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/imHansiy/hexo-alist-movie-plugin/issues"
+  },
+  "homepage": "https://github.com/imHansiy/hexo-alist-movie-plugin#readme",
   "dependencies": {
-    "axios": "^0.21.1",
-    "ejs": "^3.1.6",
-    "fs-extra": "^10.0.0"
+    "axios": "^0.21.4",
+    "ejs": "^3.1.10",
+    "fs-extra": "^10.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0"
   }
 }
