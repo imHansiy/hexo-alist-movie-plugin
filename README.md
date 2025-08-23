@@ -35,9 +35,8 @@
 在您的 Hexo 博客根目录下执行以下命令：
 
 ```bash
-npm install hexo-alist-movie-plugin
+npm i hexo-alist-movie-plugin
 ```
-*(注意: 如果你是从本地路径安装，请使用 `npm install /path/to/your/hexo-alist-movie-plugin`)*
 
 ### 2. 配置插件
 
