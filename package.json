@@ -39,6 +39,5 @@
     "hexo-renderer-pug": "^3.0.0"
   },
   "devDependencies": {
-    "eslint": "^8.57.0"
   }
 }
