@@ -67,16 +67,10 @@ body {
 
 .player-container {
     position: relative;
-    background: #f8f9fa;
-    border-radius: var(--radius);
     overflow: hidden;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    aspect-ratio: 16/9;
     width: 100%;
-    display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid var(--border-color);
     /* 响应式视频容器 */
     max-height: 80vh;
 }
@@ -1554,19 +1548,7 @@ body {
 .episode-item.active,
 .source-item.active,
 .file-item.active {
-    animation: slideIn 0.3s ease-out;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(-4px);
-        opacity: 0.8;
-    }
-
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
+    /* animation: slideIn 0.3s ease-out; */
 }
 
 /* 封面样式响应式适配 */
