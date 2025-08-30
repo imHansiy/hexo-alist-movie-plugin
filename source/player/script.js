@@ -281,7 +281,6 @@ function showLoadingState() {
             `;
             overlay.innerHTML = `
                 <div style="text-align: center; color: var(--secondary-color);">
-                    <div class="loading" style="margin: 0 auto 16px;"></div>
                     <div>正在加载播放器...</div>
                 </div>
             `;
@@ -578,7 +577,6 @@ function showVideoLoadingState() {
             justify-content: center; z-index: 1000; backdrop-filter: blur(2px);
             border-radius: var(--radius);
         `;
-        loadingOverlay.innerHTML = `<div class="loading"></div>`;
         playerContainer.appendChild(loadingOverlay);
     }
     loadingOverlay.style.display = 'flex';

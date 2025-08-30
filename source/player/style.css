@@ -1538,16 +1538,6 @@ body {
     }
 }
 
-.loading {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 2px solid var(--border-color);
-    border-top: 2px solid var(--primary-color);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
 /* 焦点样式 */
 .episode-item:focus,
 .source-item:focus,
