@@ -30,25 +30,13 @@ body {
 
 /* 主容器布局 - 简洁现代风格 */
 .main-container {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 320px;
+    display: flex;
+    flex-direction: column;
     gap: 24px;
-    max-width: 1600px;
+    max-width: 1200px; /* 限制最大宽度以适应主题 */
     margin: 0 auto;
     padding: 24px;
-    /* 关键修复：确保网格项目顶部对齐 */
-    align-items: start;
-    /* 响应式网格布局 */
-    min-height: 100vh;
     box-sizing: border-box;
-}
-
-/* 响应式网格列数配置 */
-@supports (display: grid) {
-    .main-container {
-        /* 自适应列宽，最小320px */
-        grid-template-columns: minmax(300px, 2fr) minmax(280px, 1fr);
-    }
 }
 
 /* Flexbox 后备方案 */
@@ -507,55 +495,20 @@ body {
     padding: 20px;
     box-shadow: 0 1px 3px var(--shadow-color);
     border: 1px solid var(--border-color);
-    position: sticky;
-    top: 24px;
-    /* 响应式高度控制 */
-    max-height: calc(100vh - 48px);
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
+    /* 改为静态定位 */
+    position: static;
+    width: 100%;
 }
 
-/* 移动端水平布局优化 */
-@media (max-width: 1024px) {
-    .recommendations {
-        position: static;
-        max-height: none;
-        /* 确保文件列表在播放器下面 */
-        order: 2;
-        /* 平板横屏时使用水平布局 */
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 16px;
-        align-items: start;
-    }
-    
-    .player-wrapper {
-        order: 1;
-    }
-    
-    .recommendations h3 {
-        grid-column: 1 / -1;
-        margin-bottom: 0;
-    }
-    
-    .seasons-container,
-    .sources-list,
-    .files-list {
-        min-height: 200px;
-    }
-}
-
+/* 移动端布局优化 */
 @media (max-width: 768px) {
-    .recommendations {
-        grid-template-columns: 1fr;
-        gap: 12px;
-        /* 确保在小屏幕上文件列表在播放器下面 */
-        order: 2;
+    .main-container {
+        padding: 16px;
+        gap: 16px;
     }
-    
-    .player-wrapper {
-        order: 1;
+
+    .recommendations {
+        padding: 16px;
     }
 }
 
@@ -1067,52 +1020,6 @@ body {
     }
 }
 
-/* 小桌面/平板横屏 (768px - 1024px) */
-@media (max-width: 1024px) and (min-width: 768px) {
-    .main-container {
-        grid-template-columns: 1fr;
-        gap: 20px;
-        padding: 20px;
-    }
-
-    .recommendations {
-        order: 2;
-        position: static;
-        padding: 18px;
-        /* 优化平板横屏的网格布局，更好利用空间 */
-        display: block;
-        /* 使用flex布局来更好地控制内容分布 */
-    }
-    
-    .player-wrapper {
-        order: 1;
-    }
-
-    .recommendations h3 {
-        margin-bottom: 12px;
-    }
-
-    .seasons-container,
-    .sources-list,
-    .files-list {
-        max-height: 300px;
-        width: 100%;
-    }
-
-    .episodes-list {
-        /* 平板横屏下使用更紧密的多列布局 */
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        max-height: 300px;
-        gap: 8px;
-    }
-
-    .episode-item,
-    .source-item,
-    .file-item {
-        padding: 10px 14px;
-        font-size: 0.9rem;
-    }
-}
 
 /* 平板竖屏 (600px - 768px) */
 @media (max-width: 768px) and (min-width: 600px) {
