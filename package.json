@@ -4,8 +4,6 @@
   "description": "一个功能强大的 Hexo 插件，可从 Alist 获取影视资源，并结合 TMDb API 自动生成带元数据的精美展示页面。A powerful Hexo plugin that fetches movie and TV show resources from Alist and automatically generates beautiful display pages with metadata using TMDb API.",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint .",
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",

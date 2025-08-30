@@ -1,44 +1,72 @@
-# 工作流名称
-name: 发布到 NPM
+name: Publish to npm
 
-# 触发条件：当一个新的 GitHub Release 被创建时
 on:
-  release:
-    types: [created]
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g., 1.2.3)'
+        required: true
+        type: string
 
 jobs:
-  # 定义一个名为 'publish-npm' 的作业
-  publish-npm:
-    # 在最新的 Ubuntu 环境中运行
+  test:
     runs-on: ubuntu-latest
-
-    # 授予作业读取仓库内容的权限
-    permissions:
-      contents: read
-
+    strategy:
+      matrix:
+        node-version: [16, 18, 20]
     steps:
-      # 第一步：检出代码
-      # actions/checkout 会检出与触发此工作流的 Release 相关联的提交
-      - name: 检出仓库代码
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      # 第二步：设置 Node.js 环境
-      # 使用 actions/setup-node 来配置 Node.js、缓存依赖并进行 npm 认证
-      - name: 设置 Node.js 环境并进行认证
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # 推荐使用一个稳定的 LTS 版本
-          registry-url: 'https://registry.npmjs.org/' # 指定 npm 官方仓库地址
-          # 使用我们之前在 GitHub Secrets 中设置的 NPM_TOKEN 进行认证
-          # setup-node 会自动创建一个 .npmrc 文件
-          node-auth-token: ${{ secrets.NPM_TOKEN }}
+          node-version: ${{ matrix.node-version }}
 
-      # 第三步：安装依赖
-      # 使用 npm ci 可以实现更快速、更可靠的安装
-      - name: 安装依赖项
+      - name: Install dependencies
         run: npm ci
 
-      # 第四步：发布到 npm
-      # 因为上一步已经配置了认证，所以这里可以直接发布
-      - name: 发布软件包
+      - name: Run lint
+        run: npm run lint
+
+      - name: Run tests
+        run: npm test
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Set version from tag (if triggered by tag)
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/v}
+          echo "Publishing version: $TAG_NAME"
+          npm version $TAG_NAME --no-git-tag-version
+
+      - name: Set version from input (if triggered manually)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "Publishing version: ${{ github.event.inputs.version }}"
+          npm version ${{ github.event.inputs.version }} --no-git-tag-version
+
+      - name: Publish to npm
         run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
