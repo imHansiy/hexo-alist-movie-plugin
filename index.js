@@ -574,10 +574,12 @@ async function generateMoviePages(hexo) {
 
         pages.push({
             path: `${route}/index.html`,
-            layout: ['page', 'post', 'index'],
+            layout: 'page',
             data: {
                 title: '电影列表',
-                content: html
+                content: html,
+                aside: false,
+                sidebar: false
             }
         });
     }
@@ -607,10 +609,12 @@ async function generateMoviePages(hexo) {
 
             pages.push({
                 path: `${route}/page/${p}/index.html`,
-                layout: ['page', 'post', 'index'],
+                layout: 'page',
                 data: {
                     title: `电影列表 - 第${p}页`,
-                    content: html
+                    content: html,
+                    aside: false,
+                    sidebar: false
                 }
             });
         }
@@ -642,10 +646,12 @@ async function generateMoviePages(hexo) {
 
         pages.push({
             path: `${movieRoute}/index.html`,
-            layout: ['page', 'post', 'index'],
+            layout: 'page',
             data: {
                 title: movie.title,
-                content: html
+                content: html,
+                aside: false,
+                sidebar: false
             }
         });
         
@@ -658,10 +664,12 @@ async function generateMoviePages(hexo) {
                     
                     pages.push({
                         path: `${versionRoute}/index.html`,
-                        layout: ['page', 'post', 'index'],
+                        layout: 'page',
                         data: {
                             title: `${movie.title} - ${version.version_name}`,
-                            content: redirectHtml
+                            content: redirectHtml,
+                            aside: false,
+                            sidebar: false
                         }
                     });
                 }
@@ -685,10 +693,12 @@ async function generateMoviePages(hexo) {
     });
     pages.push({
         path: `${route}/comparison.html`,
-        layout: ['page', 'post', 'index'],
+        layout: 'page',
         data: {
             title: '文件识别对比',
-            content: comparisonHtml
+            content: comparisonHtml,
+            aside: false,
+            sidebar: false
         }
     });
     return pages;
