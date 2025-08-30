@@ -550,7 +550,13 @@ function loadVideo(url) {
             player.source = { type: 'video', sources: [{ src: url, type: 'application/vnd.apple.mpegurl' }] };
         }
     } else {
-        const extension = url.split('.').pop().toLowerCase();
+        // --- BUG FIX START ---
+        // 1. 从URL中移除查询参数（?sign=...）以正确提取扩展名
+        const cleanUrl = url.split('?')[0];
+        // 2. 从清理后的URL中获取扩展名
+        const extension = cleanUrl.split('.').pop().toLowerCase();
+        // --- BUG FIX END ---
+
         const typeMap = { 'mkv': 'video/webm' }; // Plyr may need help with MKV
         player.source = { type: 'video', sources: [{ src: url, type: typeMap[extension] || `video/${extension}` }] };
     }
@@ -760,7 +766,7 @@ function loadMoviePoster() {
     const posterPlaceholder = document.getElementById('poster-placeholder');
     const posterContainer = document.querySelector('.poster-container');
     const movieInfo = document.querySelector('.movie-info');
-    
+
     if (!posterImg || !posterPlaceholder || !posterContainer || !movieInfo) {
         console.warn('未找到封面相关元素');
         return;
@@ -782,7 +788,7 @@ function loadMoviePoster() {
     // 构建 TMDB 封面 URL
     const posterUrl = buildTMDBImageUrl(currentMovie.poster_path, 'w500');
     const posterBgUrl = buildTMDBImageUrl(currentMovie.poster_path, 'w780');
-    
+
     if (!posterUrl) {
         showPosterError('无法构建封面 URL');
         return;
@@ -799,12 +805,12 @@ function loadMoviePoster() {
             posterImg.classList.add('loaded');
             posterImg.style.display = 'block';
             posterPlaceholder.style.display = 'none';
-            
+
             // 应用背景效果
             if (posterBgUrl) {
                 applyPosterBackground(movieInfo, posterBgUrl);
             }
-            
+
             console.log('封面加载成功');
         })
         .catch(error => {
@@ -816,11 +822,11 @@ function loadMoviePoster() {
 // 构建 TMDB 图片 URL
 function buildTMDBImageUrl(posterPath, size = 'w500') {
     if (!posterPath) return null;
-    
+
     const baseUrl = 'https://image.tmdb.org/t/p/';
     // 如果是相对路径，添加前缀
     const cleanPath = posterPath.startsWith('/') ? posterPath : '/' + posterPath;
-    
+
     return `${baseUrl}${size}${cleanPath}`;
 }
 
@@ -828,21 +834,21 @@ function buildTMDBImageUrl(posterPath, size = 'w500') {
 function preloadImage(url) {
     return new Promise((resolve, reject) => {
         const img = new Image();
-        
+
         const timeout = setTimeout(() => {
             reject(new Error('图片加载超时'));
         }, 10000); // 10秒超时
-        
+
         img.onload = () => {
             clearTimeout(timeout);
             resolve(img);
         };
-        
+
         img.onerror = () => {
             clearTimeout(timeout);
             reject(new Error('图片加载失败'));
         };
-        
+
         img.src = url;
     });
 }
@@ -852,10 +858,10 @@ function applyPosterBackground(movieInfo, backgroundUrl) {
     try {
         // 设置 CSS 变量
         movieInfo.style.setProperty('--poster-bg-url', `url("${backgroundUrl}")`);
-        
+
         // 添加背景类
         movieInfo.classList.add('has-poster-bg');
-        
+
         console.log('应用背景效果:', backgroundUrl);
     } catch (error) {
         console.error('应用背景效果失败:', error);
@@ -866,7 +872,7 @@ function applyPosterBackground(movieInfo, backgroundUrl) {
 function showPosterError(message) {
     const posterPlaceholder = document.getElementById('poster-placeholder');
     const posterContainer = document.querySelector('.poster-container');
-    
+
     if (posterPlaceholder && posterContainer) {
         posterContainer.classList.add('error');
         const placeholderText = posterPlaceholder.querySelector('.placeholder-text');
@@ -874,6 +880,6 @@ function showPosterError(message) {
             placeholderText.textContent = message || '封面加载失败';
         }
     }
-    
+
     console.warn('封面错误:', message);
 }
