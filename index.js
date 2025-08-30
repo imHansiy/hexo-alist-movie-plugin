@@ -425,7 +425,9 @@ async function generateMovieData(hexo) {
                         poster_path: null,
                         genre_names: [],
                         vote_average: 0,
-                        release_date: null
+                        release_date: null,
+                        sources: extractSourceInfo(group.sources || []),
+                        source_count: group.sources ? group.sources.length : 1
                     };
                     
                     movieMap.set(uniqueId, unknownMovie);
@@ -555,8 +557,7 @@ async function generateMoviePages(hexo) {
         const totalPages = Math.ceil(movies.length / perPage);
         const currentMovies = movies.slice(0, perPage);
         const html = await hexo.render.render({
-            path: path.join(__dirname, 'templates', 'movies.ejs'),
-            engine: 'ejs'
+            path: path.join(__dirname, 'templates', 'movies.pug')
         }, {
             movies: currentMovies,
             current_page: 1,
@@ -589,8 +590,7 @@ async function generateMoviePages(hexo) {
             const currentMovies = movies.slice(startIndex, startIndex + perPage);
 
             const html = await hexo.render.render({
-                path: path.join(__dirname, 'templates', 'movies.ejs'),
-                engine: 'ejs'
+                path: path.join(__dirname, 'templates', 'movies.pug')
             }, {
                 movies: currentMovies,
                 current_page: p,
@@ -621,16 +621,15 @@ async function generateMoviePages(hexo) {
         const movieRoute = `${route}/${movie.media_type}/${movie.id}`;
         
         // 如果是聚合内容，使用聚合的播放器模板
-        const templateName = movie.is_aggregated ? 'aggregated-player.ejs' : 'player.ejs';
+        const templateName = movie.is_aggregated ? 'aggregated-player.pug' : 'player.pug';
         const templatePath = path.join(__dirname, 'templates', templateName);
         
         // 如果聚合模板不存在，使用默认模板
         const fs = require('fs');
-        const finalTemplatePath = fs.existsSync(templatePath) ? templatePath : path.join(__dirname, 'templates', 'player.ejs');
+        const finalTemplatePath = fs.existsSync(templatePath) ? templatePath : path.join(__dirname, 'templates', 'player.pug');
         
         const html = await hexo.render.render({
-            path: finalTemplatePath,
-            engine: 'ejs'
+            path: finalTemplatePath
         }, {
             movie,
             route,
@@ -670,31 +669,28 @@ async function generateMoviePages(hexo) {
         }
     }
 
-    // 文件识别对比页面
-    {
-        const html = await hexo.render.render({
-            path: path.join(__dirname, 'templates', 'comparison.ejs'),
-            engine: 'ejs'
-        }, {
-            movies,
-            config: hexo.config,
-            page: {
-                title: '文件识别对比',
-                path: `${route}/comparison.html`
-            }
-        });
+    hexo.log.info(`Generated ${Math.ceil(movies.length / perPage)} movie list pages, and ${movies.length} player pages`);
 
-        pages.push({
-            path: `${route}/comparison.html`,
-            layout: ['page', 'post', 'index'],
-            data: {
-                title: '文件识别对比',
-                content: html
-            }
-        });
-    }
-
-    hexo.log.info(`Generated ${Math.ceil(movies.length / perPage)} movie list pages, ${movies.length} player pages, and 1 comparison page`);
+    // Comparison Page
+    const comparisonHtml = await hexo.render.render({
+        path: path.join(__dirname, 'templates', 'comparison.pug')
+    }, {
+        movies: movies,
+        route,
+        config: hexo.config,
+        page: {
+            title: '文件识别对比',
+            path: `${route}/comparison.html`
+        }
+    });
+    pages.push({
+        path: `${route}/comparison.html`,
+        layout: ['page', 'post', 'index'],
+        data: {
+            title: '文件识别对比',
+            content: comparisonHtml
+        }
+    });
     return pages;
 }
 
@@ -710,37 +706,6 @@ function copyAssets(hexo) {
 
     if (!fs.existsSync(sourcePath)) {
     return routes;
-}
-
-// 在首页注入“文件识别对比”按钮
-function injectHomeComparisonButton(hexo) {
-    hexo.extend.filter.register('after_render:html', function (str, data) {
-        try {
-            if (!data || !data.path) return str;
-            // 仅在站点首页注入
-            if (data.path !== 'index.html') return str;
-
-            const cfg = hexo.config.alist_movie_generator || {};
-            const route = (cfg.output && cfg.output.route) ? cfg.output.route : 'movies';
-            const link = `/${route}/comparison.html`;
-
-            const css = `
-<style id="alist-movie-compare-btn-style">
-#alist-movie-compare-btn{position:fixed;right:24px;bottom:24px;z-index:9999;display:inline-block;padding:10px 14px;border-radius:8px;background:#4a8cff;color:#fff;text-decoration:none;font-weight:600;box-shadow:0 4px 10px rgba(0,0,0,.2);}
-#alist-movie-compare-btn:hover{background:#3a78e6}
-@media (max-width: 600px){#alist-movie-compare-btn{right:12px;bottom:12px;padding:8px 12px}}
-</style>`;
-            const html = `${css}<a id="alist-movie-compare-btn" href="${link}" title="文件识别对比">文件识别对比</a>`;
-
-            if (str.includes('</body>')) {
-                return str.replace('</body>', html + '</body>');
-            }
-            return str + html;
-        } catch (e) {
-            hexo.log.warn('injectHomeComparisonButton error: ' + e.message);
-            return str;
-        }
-    });
 }
 
     // 播放器静态文件
@@ -783,6 +748,7 @@ function injectHomeComparisonButton(hexo) {
  */
 
 hexo.extend.generator.register('alist_movie', async function(locals) {
+    const config = this.config.alist_movie_generator || {};
     // 生成数据
     await generateMovieData(this);
 

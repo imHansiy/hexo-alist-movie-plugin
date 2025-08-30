@@ -37,7 +37,8 @@
   "dependencies": {
     "axios": "^0.21.4",
     "ejs": "^3.1.10",
-    "fs-extra": "^10.1.0"
+    "fs-extra": "^10.1.0",
+    "hexo-renderer-pug": "^3.0.0"
   },
   "devDependencies": {
     "eslint": "^8.57.0"

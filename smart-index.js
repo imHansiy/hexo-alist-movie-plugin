@@ -393,6 +393,7 @@ async function generateSmartMovieData(hexo) {
                         id: uniqueId,
                         original_tmdb_id: tmdbInfo.id,
                         seasons: seasons,
+                        files: [], // 添加空的files属性
                         episode_count: seasons.reduce((total, season) => total + season.episodes.length, 0),
                         directory_type: 'tv',
                         detection_method: 'smart'
@@ -409,8 +410,9 @@ async function generateSmartMovieData(hexo) {
                         media_type: 'tv',
                         directory_type: 'tv',
                         seasons: tvShow.seasons,
+                        files: [], // 添加空的files属性
                         episode_count: tvShow.seasons.reduce((total, season) => total + season.episodes.length, 0),
-                        overview: '未能从 TMDb 获取信息的电视剧',
+                        overview: '未能从 TMDb 获取信息的电��剧',
                         poster_path: null,
                         genre_names: [],
                         vote_average: 0,

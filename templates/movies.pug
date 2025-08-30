@@ -1,0 +1,501 @@
+style.
+  :root{
+    --page-max: 1600px;
+    --gap: 20px;
+    --radius-xl: 16px;
+    --radius-lg: 12px;
+    --radius-md: 10px;
+    --bg: #ffffff;
+    --bg-soft: #f7f8fa;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --primary: #2563eb;
+    --primary-600: #1d4ed8;
+    --primary-700: #1e40af;
+    --shadow-sm: 0 2px 10px rgba(0,0,0,.06);
+    --shadow-md: 0 14px 30px rgba(0,0,0,.12);
+    --chip-src-bg:#d1fae5;
+    --chip-src-bd:#a7f3d0;
+    --chip-src-fg:#065f46;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0b1220;
+      --bg-soft:#0f172a;
+      --text:#e5e7eb;
+      --muted:#9ca3af;
+      --border:#1f2a44;
+      --shadow-sm: 0 2px 10px rgba(0,0,0,.35);
+      --shadow-md: 0 18px 36px rgba(0,0,0,.5);
+      --chip-src-bg:#064e3b;
+      --chip-src-bd:#065f46;
+      --chip-src-fg:#a7f3d0;
+    }
+  }
+
+  .movies-header{
+    display:flex;align-items:center;justify-content:space-between;
+    max-width:var(--page-max);margin:32px auto 12px;padding:0 20px;
+  }
+  .page-title{
+    font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.25rem); font-weight: 800; letter-spacing:-.02em; margin:0;color:var(--text);
+  }
+  .compare-btn{
+    appearance:none;display:inline-flex;align-items:center;justify-content:center;height:38px;padding:0 14px;border-radius:10px;
+    border:1px solid var(--border);background:var(--bg-soft);color:var(--text);text-decoration:none;font-weight:700;gap:8px;
+    box-shadow:none;transition:background .15s ease,border-color .15s ease,transform .1s ease;
+  }
+  .compare-btn:hover{ background:#eef2ff; border-color:#c7d2fe; color:#1e3a8a; }
+
+  .movies-toolbar{
+    max-width:var(--page-max);margin:0 auto 14px;padding:0 20px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
+  }
+  .toolbar-left,.toolbar-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .type-btn{
+    display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:999px;font-weight:700;
+    color:var(--text);background:var(--bg-soft);border:1px solid var(--border);cursor:pointer;user-select:none;transition:.18s;
+  }
+  .type-btn:hover{background:#eef2ff;border-color:#c7d2fe;color:#1e3a8a}
+  .type-btn.active{background:#1e3a8a;border-color:#1e3a8a;color:#fff}
+  .search-input{
+    height:36px;min-width:220px;padding:0 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);outline:none;font-weight:600;
+  }
+  .sort-select,.sort-dir{
+    height:36px;padding:0 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg-soft);color:var(--text);font-weight:700;cursor:pointer;
+  }
+  .sort-dir{min-width:72px}
+  .toolbar-count{color:var(--muted);font-weight:700}
+
+  .movies-container{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:var(--gap);max-width:var(--page-max);padding:0 20px 10px;margin:0 auto;
+  }
+
+  .movie-card{
+    background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-xl);
+    overflow:hidden;box-shadow:var(--shadow-sm);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    display:flex;flex-direction:column;position:relative;
+  }
+  .movie-card:hover{ transform:translateY(-2px); box-shadow:var(--shadow-md); border-color:rgba(37,99,235,.25); }
+
+  .poster-wrap{ position:relative; width:100%; aspect-ratio: 2/3; background:var(--bg-soft); overflow:hidden; }
+  .poster-wrap::after{
+    content:""; position:absolute; inset:0;
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.35), rgba(255,255,255,0));
+    animation: shimmer 1.4s infinite; opacity:.35; pointer-events:none;
+  }
+  @media (prefers-color-scheme: dark){
+    .poster-wrap::after{ background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.08), rgba(255,255,255,0)); opacity:.25; }
+  }
+  @keyframes shimmer{ 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+  .poster-wrap.loaded::after{ opacity:0; animation:none; }
+
+  .poster-image{ width:100%; height:100%; object-fit:cover; transform:scale(1.0); transition: transform .35s ease; display:block; }
+  .movie-card:hover .poster-image{ transform:scale(1.04); }
+
+  .poster-overlay{
+    position:absolute; inset:0; pointer-events:none;
+    background: linear-gradient(to top, rgba(0,0,0,.62) 0%, rgba(0,0,0,.0) 55%);
+  }
+
+  .stretched-link{ position:absolute; inset:0; z-index:3; text-decoration:none; color:inherit; }
+
+  .badge-tl{
+    position:absolute; left:10px; top:10px; display:flex; gap:6px; z-index:2;
+  }
+  .chip{
+    display:inline-flex; align-items:center; gap:6px;
+    height:26px; padding:0 10px; border-radius:999px; font-size:.75rem; font-weight:800; letter-spacing:.02em; backdrop-filter:saturate(1.2) blur(6px);
+    border:1px solid rgba(255,255,255,.25);
+  }
+  .chip-year{ color:#fff; background:rgba(31,41,55,.45); }
+  .chip-type.movie{ color:#1e3a8a; background:#dbeafe; border-color:#bfdbfe; }
+  .chip-type.tv{ color:#6d28d9; background:#f3e8ff; border-color:#e9d5ff; }
+  .chip-type.unknown{ color:#92400e; background:#fef3c7; border-color:#fde68a; }
+  .chip-src{ color:var(--chip-src-fg); background:var(--chip-src-bg); border-color:var(--chip-src-bd); }
+
+  .badge-tr{ position:absolute; right:10px; top:10px; z-index:2; }
+  .rating-circle{
+    width:42px;height:42px;border-radius:50%;
+    background:conic-gradient(#22c55e calc(var(--p,0)*1%), #e5e7eb 0);
+    display:grid;place-items:center;border:2px solid rgba(255,255,255,.4); box-shadow:0 6px 16px rgba(0,0,0,.18);
+  }
+  @media (prefers-color-scheme: dark){
+    .rating-circle{ background:conic-gradient(#22c55e calc(var(--p,0)*1%), #1f2937 0); }
+  }
+  .rating-circle span{
+    font-weight:900;font-size:.8rem;color:#111827;text-shadow:0 1px 0 rgba(255,255,255,.5);
+  }
+
+  .title-wrap{
+    position:absolute; left:0; right:0; bottom:0; z-index:2;
+    padding:14px 14px 12px; color:#fff;
+  }
+  .movie-title{
+    margin:0; font-size:1.05rem; line-height:1.35; font-weight:900; letter-spacing:.01em;
+    display:-webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow:hidden; text-shadow:0 1px 2px rgba(0,0,0,.5);
+  }
+  .original-title{font-size:.78rem; opacity:.88; margin-left:6px; font-weight:700;}
+
+  .genre-chips{
+    position:absolute; left:10px; bottom:8px; z-index:2; display:flex; gap:6px; flex-wrap:wrap;
+  }
+  .genre-chip{
+    color:#0f172a;background:#e2e8f0;border:1px solid #cbd5e1;border-radius:999px;font-size:.7rem;font-weight:800;padding:2px 8px;
+  }
+
+  .movie-card-content{
+    display:flex;flex-direction:column;gap:10px;padding:14px 14px 14px;
+  }
+
+  .movie-meta{
+    display:flex;flex-wrap:wrap;gap:8px;font-size:.8rem;color:var(--muted);
+  }
+  .movie-meta span{
+    background: var(--bg-soft); padding:4px 8px; border-radius:8px; font-weight:700; white-space:nowrap; border:1px solid var(--border);
+  }
+  .status-tag{
+    font-size:.72rem; padding:2px 6px; border-radius:6px; font-weight:800; letter-spacing:.02em;
+  }
+  .status-tag.returning-series{ background:#d1fae5; color:#065f46; border:1px solid #a7f3d0; }
+  .status-tag.ended{ background:#fee2e2; color:#991b1b; border:1px solid #fecaca; }
+  .status-tag.in-production{ background:#dbeafe; color:#1e3a8a; border:1px solid #bfdbfe; }
+
+  .content-ratings{ font-size:.75rem; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .ratings-label{ color:var(--muted); font-weight:700; margin-right:4px; }
+  .rating-badge{
+    display:inline-block; padding:3px 8px; background:#fef3c7; color:#92400e; border:1px solid #fde68a; border-radius:6px; font-weight:800; cursor:help;
+  }
+
+  .movie-overview{
+    font-size:.86rem; color:var(--muted); line-height:1.65; display:-webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow:hidden;
+  }
+
+  .card-actions{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:auto; }
+  .play-button{
+    appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:38px;padding:0 14px;border-radius:10px;
+    border:1px solid var(--border);background:#1e3a8a;color:#fff;text-decoration:none;font-weight:800;letter-spacing:.02em;
+    box-shadow:none;
+  }
+  .play-button::before{ content:'▶'; font-size:.85em; }
+  .play-button.disabled, .play-button[aria-disabled="true"]{ background:var(--bg-soft)!important; color:var(--muted)!important; border-color:var(--border)!important; cursor:not-allowed; opacity:.7; }
+  .play-button.disabled:hover{ transform:none; }
+
+  /* Pagination */
+  .movies-pagination{
+    max-width:var(--page-max); margin:18px auto 36px; padding:0 20px; display:flex; justify-content:center;
+  }
+  .pagination{
+    display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center;
+    background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:10px; box-shadow:var(--shadow-sm);
+  }
+  .pagination a, .pagination span{
+    min-width:36px; height:36px; display:grid; place-items:center; padding:0 10px;
+    border-radius:10px; border:1px solid var(--border); background:var(--bg-soft);
+    color:var(--text); text-decoration:none; font-weight:800; font-size:.9rem;
+    transition: all .18s ease;
+  }
+  .pagination a:hover{ background:#eef2ff; border-color:#c7d2fe; color:#1e3a8a; transform: translateY(-1px); }
+  .pagination .active{ background:#1e3a8a; color:#fff; border-color:#1e3a8a; }
+
+
+  @media (max-width: 780px){
+    .search-input{min-width:160px}
+  }
+
+.movies-header
+  h1.page-title 电影中心
+  a.compare-btn(href=`/${route}/comparison.html`, title="文件识别对比") 文件识别对比
+
+.movies-toolbar(role="region", aria-label="筛选与排序")
+  .toolbar-left
+    button.type-btn.active(data-type="all", aria-pressed="true") 全部
+    button.type-btn(data-type="movie", aria-pressed="false") 电影
+    button.type-btn(data-type="tv", aria-pressed="false") 电视剧
+    button.type-btn(data-type="unknown", aria-pressed="false") 未知
+  .toolbar-right
+    input.search-input(type="search", placeholder="搜索 标题/原名/类型/标签…", aria-label="搜索影片")
+    select.sort-select(aria-label="排序字段")
+      option(value="rating") 按评分
+      option(value="popularity") 按热度
+      option(value="date") 按日期
+      option(value="title") 按标题
+    button.sort-dir(data-dir="desc", aria-label="排序方向") 降序
+    span.toolbar-count(aria-live="polite")
+
+.movies-container#movies-container
+  each movie in movies
+    -
+      const isTV = movie.media_type === 'tv';
+      const isMovie = movie.media_type === 'movie';
+      const dateStr = isTV ? movie.first_air_date : movie.release_date;
+      const year = dateStr ? String(dateStr).slice(0,4) : '';
+      const rating = (movie.vote_average && movie.vote_average > 0) ? movie.vote_average.toFixed(1) : '';
+      const popularity = (movie.popularity && movie.popularity > 0) ? movie.popularity : 0;
+      const dateKey = (function(){
+        const d = dateStr ? String(dateStr).replace(/-/g,'') : '';
+        return d ? parseInt(d) : 0;
+      })();
+      const isTmdbPoster = movie.poster_path && !String(movie.poster_path).startsWith('http');
+      const poster500 = movie.poster_path
+        ? (isTmdbPoster ? ('https://image.tmdb.org/t/p/w500' + movie.poster_path) : movie.poster_path)
+        : '/static/no_cover.png';
+      const poster300 = isTmdbPoster ? ('https://image.tmdb.org/t/p/w300' + movie.poster_path) : poster500;
+      const sourceCount = (isMovie && movie.source_count && movie.source_count > 1) ? movie.source_count
+        : (isMovie && movie.sources && movie.sources.length > 1 ? movie.sources.length : 0);
+      const genresText = (movie.genre_names && movie.genre_names.length > 0) ? movie.genre_names.join(', ') : '';
+      const titleLower = (movie.title || '').toLowerCase();
+      const originalLower = (isTV && movie.original_name ? movie.original_name : '').toLowerCase();
+      const genresLower = genresText.toLowerCase();
+      const link = movie.media_type !== 'unknown' ? ('/'+route+'/'+movie.media_type+'/'+movie.id+'/') : '';
+
+    .movie-card(
+      data-type=movie.media_type,
+      data-title=titleLower.replace(/\"/g,'"'),
+      data-original=originalLower.replace(/\"/g,'"'),
+      data-genres=genresLower.replace(/\"/g,'"'),
+      data-rating=rating ? rating : 0,
+      data-popularity=popularity,
+      data-date=dateKey
+    )
+      .poster-wrap
+        if link
+          a.stretched-link(href=link, aria-label=`打开 ${movie.title}`)
+        img.poster-image(
+          loading="lazy",
+          decoding="async",
+          src=poster500,
+          srcset=`${poster300} 300w, ${poster500} 500w`,
+          sizes="(max-width: 680px) 50vw, 220px",
+          alt=`${movie.title} Poster`,
+          onload="(function(el){var pw=(el.closest?el.closest('.poster-wrap'):null); if(pw && pw.classList){pw.classList.add('loaded');}})(this)",
+          onerror="this.src='/static/no_cover.png'; (function(el){var pw=(el.closest?el.closest('.poster-wrap'):null); if(pw && pw.classList){pw.classList.add('loaded');}})(this); this.onerror=null;"
+        )
+        .poster-overlay
+
+        .badge-tl
+          if year
+            span.chip.chip-year= year
+          if movie.directory_source && movie.directory_source !== 'default'
+            span.chip.chip-src= movie.directory_source
+          if isMovie
+            span.chip.chip-type.movie 电影
+          else if isTV
+            span.chip.chip-type.tv 电视剧
+          else
+            span.chip.chip-type.unknown 未知
+          if sourceCount > 1
+            span.chip(style="color:#0f172a;background:#e2e8f0;border-color:#cbd5e1;") 片源×#{sourceCount}
+
+        if rating
+          .badge-tr
+            .rating-circle(style=`--p:${Math.min(100, Math.max(0, (movie.vote_average/10)*100))}`)
+              span= rating
+
+        .title-wrap
+          h3.movie-title
+            | #{movie.title}
+            if isTV && movie.original_name && movie.original_name !== movie.title
+              span.original-title (#{movie.original_name})
+
+        if movie.genre_names && movie.genre_names.length > 0
+          .genre-chips
+            each g in movie.genre_names.slice(0,2)
+              span.genre-chip= g
+
+      .movie-card-content
+        .movie-meta
+          if isTV
+            if movie.first_air_date
+              span 📅 首播: #{movie.first_air_date}
+            if movie.last_air_date
+              span 📅 完结: #{movie.last_air_date}
+            if movie.number_of_seasons && movie.number_of_episodes
+              span 📺 #{movie.number_of_seasons}季#{movie.number_of_episodes}集
+            else if movie.episode_count
+              span 📺 共#{movie.episode_count}集
+            if movie.status
+              span.status-tag(class=movie.status.toLowerCase().replace(/\s+/g,'-'))= movie.status
+          else
+            if movie.release_date
+              span 📅 #{movie.release_date}
+
+          if rating
+            span ⭐ #{rating}
+          if movie.popularity && movie.popularity > 0
+            span 🔥 #{movie.popularity.toFixed(0)}
+          if movie.genre_names && movie.genre_names.length > 0
+            span 🎭 #{movie.genre_names.slice(0, 2).join(', ')}
+          if !isMovie && movie.file_count > 1
+            span 📁 #{movie.file_count}个文件
+
+        if movie.content_ratings && movie.content_ratings.length > 0
+          .content-ratings
+            span.ratings-label 分级:
+            each rating in movie.content_ratings.slice(0, 3)
+              span.rating-badge(title=rating.meaning) #{rating.iso_3166_1}: #{rating.rating}
+
+        p.movie-overview= movie.overview && movie.overview.trim() ? movie.overview : '暂无简介'
+
+        .card-actions
+          if movie.media_type !== 'unknown'
+            a.play-button(href=`/${route}/${movie.media_type}/${movie.id}/`, target="_blank", title="立即播放") 立即播放
+          else
+            a.play-button.disabled(aria-disabled="true", title="需要手动识别") 需要手动识别
+
+if typeof total_pages !== 'undefined' && total_pages > 1
+  .movies-pagination
+    .pagination
+      - const curr = current_page || 1;
+      - const prev = Math.max(1, curr - 1);
+      - const next = Math.min(total_pages, curr + 1);
+
+      a(href=`/${route}/`, title="首页") «
+      a(href=(prev === 1 ? `/${route}/` : `/${route}/page/${prev}/`), title="上一页") ‹
+
+      -
+        const windowSize = 2;
+        const start = Math.max(1, curr - windowSize);
+        const end = Math.min(total_pages, curr + windowSize);
+      if start > 1
+        a(href=`/${route}/`, title="第1页") 1
+        span …
+      - for (let p = start; p <= end; p++)
+        - const href = p === 1 ? (`/${route}/`) : (`/${route}/page/${p}/`);
+        if p === curr
+          span.active= p
+        else
+          a(href=href)= p
+      if end < total_pages
+        span …
+        a(href=`/${route}/page/${total_pages}/`, title=`第${total_pages}页`)= total_pages
+
+      a(href=(next === 1 ? `/${route}/` : `/${route}/page/${next}/`), title="下一页") ›
+      a(href=`/${route}/page/${total_pages}/`, title="末页") »
+
+script.
+  (function(){
+    const container = document.getElementById('movies-container');
+    if(!container) return;
+    const cards = Array.from(container.children);
+    const qs = (sel, root=document) => root.querySelector(sel);
+    const qsa = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+    const typeBtns = qsa('.type-btn');
+    const searchInput = qs('.search-input');
+    const sortSelect = qs('.sort-select');
+    const sortDirBtn = qs('.sort-dir');
+    const countEl = qs('.toolbar-count');
+
+    const stateKey = 'alist-movie-ui';
+    const loadState = () => {
+      try{ return JSON.parse(sessionStorage.getItem(stateKey) || '{}'); }catch(e){ return {}; }
+    };
+    const saveState = (s) => {
+      try{ sessionStorage.setItem(stateKey, JSON.stringify(s)); }catch(e){}
+    };
+
+    let state = Object.assign({ type:'all', q:'', sort:'rating', dir:'desc' }, loadState());
+
+    // apply UI from state
+    typeBtns.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.type === state.type);
+      btn.setAttribute('aria-pressed', String(btn.classList.contains('active')));
+    });
+    searchInput.value = state.q || '';
+    sortSelect.value = state.sort || 'rating';
+    sortDirBtn.dataset.dir = state.dir || 'desc';
+    sortDirBtn.textContent = state.dir === 'asc' ? '升序' : '降序';
+
+    const debounce = (fn, ms=200) => {
+      let t; return (...args)=>{ clearTimeout(t); t = setTimeout(()=>fn(...args), ms); };
+    };
+
+    function visible(card, type, q){
+      const t = card.dataset.type;
+      if(type !== 'all' && type !== t) return false;
+      if(q){
+        const needle = q.toLowerCase();
+        return (card.dataset.title||'').includes(needle)
+            || (card.dataset.original||'').includes(needle)
+            || (card.dataset.genres||'').includes(needle);
+      }
+      return true;
+    }
+
+    function compare(a, b, field, dir){
+      let va, vb;
+      if(field === 'title'){
+        va = a.dataset.title || '';
+        vb = b.dataset.title || '';
+        const cmp = va.localeCompare(vb, 'zh-Hans-CN');
+        return dir === 'asc' ? cmp : -cmp;
+      }
+      if(field === 'date'){
+        va = parseInt(a.dataset.date||'0',10);
+        vb = parseInt(b.dataset.date||'0',10);
+      }else if(field === 'rating'){
+        va = parseFloat(a.dataset.rating||'0');
+        vb = parseFloat(b.dataset.rating||'0');
+      }else if(field === 'popularity'){
+        va = parseFloat(a.dataset.popularity||'0');
+        vb = parseFloat(b.dataset.popularity||'0');
+      }else{
+        va = 0; vb = 0;
+      }
+      if(va === vb) return 0;
+      return dir === 'asc' ? (va - vb) : (vb - va);
+    }
+
+    function render(){
+      const {type, q, sort, dir} = state;
+      let visibleCards = [];
+      cards.forEach(card => {
+        const show = visible(card, type, q);
+        card.style.display = show ? '' : 'none';
+        if(show) visibleCards.push(card);
+      });
+
+      if(sort){
+        visibleCards.sort((a,b)=>compare(a,b,sort,dir));
+        // append in order
+        const frag = document.createDocumentFragment();
+        visibleCards.forEach(c=>frag.appendChild(c));
+        container.appendChild(frag);
+      }
+
+      countEl.textContent = `显示 ${visibleCards.length} / 总 ${cards.length}`;
+      saveState(state);
+    }
+
+    // events
+    typeBtns.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        typeBtns.forEach(b=>{ b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
+        btn.classList.add('active'); btn.setAttribute('aria-pressed','true');
+        state.type = btn.dataset.type || 'all';
+        render();
+      });
+    });
+
+    searchInput.addEventListener('input', debounce(()=>{
+      state.q = searchInput.value.trim();
+      render();
+    }, 200));
+
+    sortSelect.addEventListener('change', ()=>{
+      state.sort = sortSelect.value;
+      render();
+    });
+
+    sortDirBtn.addEventListener('click', ()=>{
+      state.dir = (sortDirBtn.dataset.dir === 'asc') ? 'desc' : 'asc';
+      sortDirBtn.dataset.dir = state.dir;
+      sortDirBtn.textContent = state.dir === 'asc' ? '升序' : '降序';
+      render();
+    });
+
+    // initial render
+    render();
+  })();

@@ -1,0 +1,83 @@
+- const isTV = movie.media_type === 'tv';
+- const isMovie = movie.media_type === 'movie';
+
+//- 链接播放器专用样式
+link(rel="stylesheet", href="https://cdn.plyr.io/3.7.8/plyr.css")
+link(rel="stylesheet", href="/player/style.css")
+
+.main-container
+  //- 左侧主内容区：播放器和影片信息
+  .player-wrapper
+    .player-container
+      video#player(playsinline, controls)
+    .movie-info
+      //- 影片封面
+      .movie-poster-section
+        .poster-container
+          img.movie-poster#movie-poster(alt="影片封面", style="display: none;")
+          .poster-placeholder#poster-placeholder
+            .placeholder-icon 🎬
+            .placeholder-text 加载封面中...
+        .movie-basic-info
+          //- 详细信息将由 script.js 根据下方注入的数据动态填充
+          h1.movie-title
+          .movie-meta
+            .movie-details
+      .movie-overview-box
+        h2 剧情简介
+        p.movie-overview
+
+      //- 电视剧特有信息占位符
+      if isTV
+        .movie-tagline-box(style="display: none;")
+          h2 宣传语
+          p.movie-tagline
+        .movie-countries-box(style="display: none;")
+          h2 制作国家
+          p.movie-countries
+        .movie-networks-box(style="display: none;")
+          h2 播出平台
+          .networks-list
+        .movie-companies-box(style="display: none;")
+          h2 制作公司
+          .companies-list
+        .movie-creators-box(style="display: none;")
+          h2 创作者
+          .creators-list
+        .episode-runtime-box(style="display: none;")
+          h2 单集时长
+          p.episode-runtime
+        .movie-language-box(style="display: none;")
+          h2 原始语言
+          p.movie-language
+        .movie-languages-box(style="display: none;")
+          h2 支持语言
+          p.movie-languages
+
+  //- 右侧边栏：选集或片源列表
+  .recommendations
+    //- 此区域将由 script.js 动态填充
+
+//- Hls.js 用于播放在线视频流
+script(src="https://cdn.jsdelivr.net/npm/hls.js@latest")
+//- Plyr.js 播放器核心库
+script(src="https://cdn.plyr.io/3.7.8/plyr.js")
+
+//- 将当前影片数据注入到页面，供 script.js 使用
+script(type="application/json")#movie-json!= JSON.stringify(movie).replace(/<\/script/g, '<\\/script')
+
+//- 注入一个帮助脚本，确保 movieData 在主脚本加载前可用
+script.
+  document.addEventListener('DOMContentLoaded', function () {
+    try {
+      // 将JSON数据赋值给全局变量，以便 script.js 访问
+      window.movieData = JSON.parse(document.getElementById('movie-json').textContent);
+      console.log('电影数据已成功注入:', window.movieData.title);
+    } catch (error) {
+      console.error('电影数据注入失败:', error);
+      window.movieData = null;
+    }
+  });
+
+//- 加载主逻辑脚本
+script(src="/player/script.js")
