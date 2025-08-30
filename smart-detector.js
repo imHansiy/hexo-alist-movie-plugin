@@ -416,20 +416,26 @@ class SmartDetector {
           // 只有当文件名包含明显的剧集信息时，才作为剧集处理
           if (episodeInfo.episode) {
             episodes.push({
+              episode: episodeInfo.episode,
               episode_number: episodeInfo.episode,
+              title: title,
               name: title,
+              path: `${seasonPath}/${item.name}`,
+              sign: item.sign, // 保留sign参数
               url: item.url || `${alistApi.baseUrl}/d${seasonPath}/${item.name}${item.sign ? '?sign=' + item.sign : ''}`,
-              download_url: item.url || `${alistApi.baseUrl}/d${seasonPath}/${item.name}${item.sign ? '?sign=' + item.sign : ''}`,
-              path: `${seasonPath}/${item.name}`
+              download_url: item.url || `${alistApi.baseUrl}/d${seasonPath}/${item.name}${item.sign ? '?sign=' + item.sign : ''}`
             });
           } else {
             // 没有明显剧集信息的文件，使用文件名作为标题
             episodes.push({
+              episode: episodes.length + 1,
               episode_number: episodes.length + 1, // 使用序号作为集数
+              title: item.name.replace(/\.[^.]+$/, ''), // 移除扩展名作为标题
               name: item.name.replace(/\.[^.]+$/, ''), // 移除扩展名作为标题
+              path: `${seasonPath}/${item.name}`,
+              sign: item.sign, // 保留sign参数
               url: item.url || `${alistApi.baseUrl}/d${seasonPath}/${item.name}${item.sign ? '?sign=' + item.sign : ''}`,
-              download_url: item.url || `${alistApi.baseUrl}/d${seasonPath}/${item.name}${item.sign ? '?sign=' + item.sign : ''}`,
-              path: `${seasonPath}/${item.name}`
+              download_url: item.url || `${alistApi.baseUrl}/d${seasonPath}/${item.name}${item.sign ? '?sign=' + item.sign : ''}`
             });
           }
         }

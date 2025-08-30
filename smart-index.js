@@ -379,13 +379,22 @@ async function generateSmartMovieData(hexo) {
                     // 提取季集信息
                     const seasons = tvShow.seasons.map(season => ({
                         season_number: season.season,
-                        episodes: season.episodes.map(episode => ({
-                            episode_number: episode.episode,
-                            name: episode.title,
-                            url: episode.file ? (episode.file.url || `${config.alist.url}/d${episode.file.path}${episode.file.sign ? `?sign=${episode.file.sign}` : ''}`) : `${config.alist.url}/d${episode.path}`,
-                            download_url: episode.file ? (episode.file.download_url || `${config.alist.url}/d${episode.file.path}${episode.file.sign ? `?sign=${episode.file.sign}` : ''}`) : `${config.alist.url}/d${episode.path}`,
-                            path: episode.path
-                        }))
+                        episodes: season.episodes.map(episode => {
+                            // 获取sign参数，优先从episode.file获取，然后从episode本身获取
+                            const signParam = episode.file?.sign || episode.sign;
+                            const signQuery = signParam ? `?sign=${signParam}` : '';
+                            
+                            const basePath = episode.file ? episode.file.path : episode.path;
+                            const baseUrl = `${config.alist.url}/d${basePath}${signQuery}`;
+                            
+                            return {
+                                episode_number: episode.episode_number || episode.episode,
+                                name: episode.title || episode.name,
+                                url: episode.file?.url || baseUrl,
+                                download_url: episode.file?.download_url || baseUrl,
+                                path: episode.path
+                            };
+                        })
                     }));
 
                     const tvData = {
